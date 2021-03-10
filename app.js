@@ -1,28 +1,55 @@
-/**
- * Example store structure
- */
+
 const store = {
-  // 5 or more questions are required
   questions: [
     {
-      question: 'What color is broccoli?',
+      question: 'How many NBA championships did Kobe Bryant win?',
       answers: [
-        'red',
-        'orange',
-        'pink',
-        'green'
+        '2',
+        '3',
+        '4',
+        '5'
       ],
-      correctAnswer: 'green'
+      correctAnswer: '5'
     },
     {
-      question: 'What is the current year?',
+      question: 'What team did Kobe Bryant play for?',
       answers: [
-        '1970',
-        '2015',
-        '2019',
-        '2005'
+        'Bulls',
+        'Lakers',
+        'Celtics',
+        'Spurs'
       ],
-      correctAnswer: '2019'
+      correctAnswer: 'Lakers'
+    },
+    {
+      question: 'Which team did Michael Jordan win 6 rings with?',
+      answers: [
+        'Wizards',
+        'Celtics',
+        'Bulls',
+        'Rockets'
+      ],
+      correctAnswer: 'Bulls'
+    },
+    {
+      question: 'Who is the all time scoring leader as of 2021?',
+      answers: [
+        'Kareem Abdul-Jabbar',
+        'Lebron James',
+        'Kobe Bryant',
+        'Karl Malone'
+      ],
+      correctAnswer: 'Kareem Abdul-Jabbar'
+    },
+    {
+      question: 'Who was the only player to score 100 points in a game?',
+      answers: [
+        'Devon Booker',
+        'Michael Jordan',
+        'Kobe Bryant',
+        'Wilt Chamberlain'
+      ],
+      correctAnswer: 'Wilt Chamberlain'
     }
   ],
   quizStarted: false,
@@ -48,11 +75,37 @@ const store = {
 /********** TEMPLATE GENERATION FUNCTIONS **********/
 
 // These functions return HTML templates
+function welcomeScreen() {
+  return '
+    <div class="welcome">
+      <p>Welcome, this is a basic quiz about basketball.</p> 
+      <button type="button" id="startQuiz">Start Quiz</button>
+    </div>
+  ';
+}
 
 /********** RENDER FUNCTION(S) **********/
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
+function render() {
+  if(quizStarted === false){
+    $('main').html(welcomeScreen());
+  }
+  else if(score.questionNumber < score.question.length){
+
+  }
+  else{
+
+  }
+}
 
 /********** EVENT HANDLER FUNCTIONS **********/
 
 // These functions handle events (submit, click, etc)
+function handleStartQuiz() {
+  $('main').on('click', '.welcome', event => {
+    score.quizStarted = true;
+    console.log('Quiz started.');
+    render();
+  });
+}
