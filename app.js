@@ -76,23 +76,43 @@ const store = {
 
 // These functions return HTML templates
 function welcomeScreen() {
-  return '
+  return `
     <div class="welcome">
       <p>Welcome, this is a basic quiz about basketball.</p> 
       <button type="button" id="startQuiz">Start Quiz</button>
     </div>
-  ';
+  `;
+}
+
+function generateScoreCurrentQuestion() {
+  return `
+    <div class="score">
+      <ul>
+        <li>"Question:" ${store.questionNumber + 1}/${store.questions.length}</li>
+        <li>"Score:" ${store.score}/${store.questions.length}</li>
+      </ul>
+    </div>
+  `;
+}
+
+function generateQuestion() {
+  return `
+    <div class="question">
+      <p>${store.questions[store.questionNumber].question}</p>
+    </div>
+  `;
 }
 
 /********** RENDER FUNCTION(S) **********/
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
 function render() {
-  if(quizStarted === false){
+  if(store.quizStarted === false){
     $('main').html(welcomeScreen());
   }
-  else if(score.questionNumber < score.question.length){
-
+  else if(score.questionNumber < score.questions.length){
+    $('main').html(generateScoreCurrentQuestion());
+    $('main').html(generateQuestion());
   }
   else{
 
@@ -103,9 +123,16 @@ function render() {
 
 // These functions handle events (submit, click, etc)
 function handleStartQuiz() {
-  $('main').on('click', '.welcome', event => {
+  $('main').on('click', '.welcome', (event) => {
     score.quizStarted = true;
     console.log('Quiz started.');
     render();
   });
 }
+
+function handleQuiz(){
+  render();
+  handleStartQuiz();
+}
+
+$(handleQuiz);
