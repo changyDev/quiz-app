@@ -88,8 +88,8 @@ function generateScoreCurrentQuestion() {
   return `
     <div class="score">
       <ul>
-        <li>"Question:" ${store.questionNumber + 1}/${store.questions.length}</li>
-        <li>"Score:" ${store.score}/${store.questions.length}</li>
+        <li>Question: ${store.questionNumber + 1}/${store.questions.length}</li>
+        <li>Score: ${store.score}/${store.questions.length}</li>
       </ul>
     </div>
   `;
@@ -103,6 +103,20 @@ function generateQuestion() {
   `;
 }
 
+function generateAnswers() {
+  let currQuestion = store.questions[store.questionNumber].answers;
+  let answersChoices = '<form class="answers">';
+  currQuestion.forEach(element => {
+    answersChoices +=`
+      <div>
+        <input type="radio" name="answer" id="${element}" value="${element}">
+        <label for="${element}">${element}</label>
+      </div>`
+      });
+  answersChoices += '</form>';
+  return answersChoices;
+}
+
 /********** RENDER FUNCTION(S) **********/
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
@@ -110,9 +124,11 @@ function render() {
   if(store.quizStarted === false){
     $('main').html(welcomeScreen());
   }
-  else if(score.questionNumber < score.questions.length){
-    $('main').html(generateScoreCurrentQuestion());
-    $('main').html(generateQuestion());
+  else if(store.questionNumber < store.questions.length){
+    let addHtml = generateScoreCurrentQuestion();
+    addHtml += generateQuestion();
+    addHtml +=  generateAnswers();
+    $('main').html(addHtml);
   }
   else{
 
@@ -123,8 +139,8 @@ function render() {
 
 // These functions handle events (submit, click, etc)
 function handleStartQuiz() {
-  $('main').on('click', '.welcome', (event) => {
-    score.quizStarted = true;
+  $('main').on('click', '#startQuiz', (event) => {
+    store.quizStarted = true;
     console.log('Quiz started.');
     render();
   });
