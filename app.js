@@ -116,7 +116,7 @@ function generateAnswers() {
   currQuestion.forEach(element => {
     answersChoices +=`
       <div class="answerList">
-        <input type="radio" name="answer" id="${element}" value="${element}">
+        <input type="radio" name="answer" id="${element}" value="${element}" required>
         <label for="${element}">${element}</label>
       </div>`
       });
@@ -152,7 +152,8 @@ function generateFeedback() {
     else {
       return `
       <div class="incorrectAnswer">The correct answer is ${store.questions[store.questionNumber].correctAnswer}.</div>
-      `}
+      `;
+      }
   }
 }
 
@@ -207,8 +208,12 @@ function handleStartQuiz() {
 function handleSubmit() {
   $('main').on('click', '#submit', (event) => {
     event.preventDefault();
+    if($('input[name=answer]:checked').val() > 0){
     $('.buttons').prepend(generateFeedback());
-    generateNextandDisableButtons();
+    generateNextandDisableButtons();}
+    else{
+      alert('Please select an option!');
+    }
   });
 }
 
