@@ -75,15 +75,20 @@ const store = {
 /********** TEMPLATE GENERATION FUNCTIONS **********/
 
 // These functions return HTML templates
+
+//Generating the initial welcome screen with the start quiz button
 function welcomeScreen() {
   return `
     <div class="welcome">
-      <p>Welcome, this is a basic quiz about basketball.</p> 
-      <button type="button" id="startQuiz">Start Quiz</button>
+      <p>Welcome, this is a basic quiz about basketball.</p>
+        <div class="buttons">
+          <button type="button" id="startQuiz">Start Quiz</button>
+        </div>
     </div>
   `;
 }
 
+//Generates the current question and the score
 function generateScoreCurrentQuestion() {
   return `
     <div class="score">
@@ -95,6 +100,7 @@ function generateScoreCurrentQuestion() {
   `;
 }
 
+//Generates the current question
 function generateQuestion() {
   return `
     <div class="question">
@@ -103,45 +109,123 @@ function generateQuestion() {
   `;
 }
 
+//Generates the answers to the current question
 function generateAnswers() {
   let currQuestion = store.questions[store.questionNumber].answers;
-  let answersChoices = '<form class="answers">';
+  let answersChoices = '';
   currQuestion.forEach(element => {
     answersChoices +=`
-      <div>
+      <div class="answerList">
         <input type="radio" name="answer" id="${element}" value="${element}">
         <label for="${element}">${element}</label>
       </div>`
       });
-  answersChoices += '</form>';
   return answersChoices;
 }
+
+//Combines the the score, question, and answers and creates the submit and next buttons
+function generateButtonsandCombine() {
+  let combineHtml = '<form class="question-form"><fieldset>';
+  combineHtml += generateScoreCurrentQuestion();
+  combineHtml += generateQuestion();
+  combineHtml += generateAnswers();
+  combineHtml += `
+  <div class="buttons">
+    <button type="submit" id="submit">Submit</button>
+    <button type="button" id="next">Next</button>
+  </div></fieldset></form>
+  `;
+  return combineHtml;
+}
+
+//Generates the feedback to the user and lets them know if they are right
+function generateFeedback() {
+  let userAnswer = $('input[name=answer]:checked').val();
+  if(userAnswer.length != 0){
+    console.log('Answer submitted ' + userAnswer);
+    if(userAnswer === store.questions[store.questionNumber].correctAnswer){
+      store.score++;
+      return`
+      <div class="correctAnswer">That is correct!~</div>
+      `;
+      }
+    else {
+      return `
+      <div class="incorrectAnswer">The correct answer is ${store.questions[store.questionNumber].correctAnswer}.</div>
+      `}
+  }
+}
+
+//Hides the submit button while disabling the radio buttons and shows the next button
+function generateNextandDisableButtons() {
+  $('#submit').hide();
+  $('#next').show();
+  $('input[type=radio]').attr('disabled', true);
+}
+
+//Generates the final score
+function generateFinalScore() {
+  return `
+    <div id="finalScore">Final Score ${store.score}/${store.questions.length}</div>
+    <div class="buttons">
+      <button type="button" id="restart">Restart Quiz</button>
+    </div>
+  `;
+}
+
 
 /********** RENDER FUNCTION(S) **********/
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
+//Conditional render function and calls other functions based on the criteria
 function render() {
   if(store.quizStarted === false){
     $('main').html(welcomeScreen());
   }
   else if(store.questionNumber < store.questions.length){
-    let addHtml = generateScoreCurrentQuestion();
-    addHtml += generateQuestion();
-    addHtml +=  generateAnswers();
-    $('main').html(addHtml);
+    $('main').html(generateButtonsandCombine());
   }
   else{
-
+    $('main').html(generateFinalScore());
   }
 }
 
 /********** EVENT HANDLER FUNCTIONS **********/
 
 // These functions handle events (submit, click, etc)
+
+//Handles the start quiz button
 function handleStartQuiz() {
   $('main').on('click', '#startQuiz', (event) => {
     store.quizStarted = true;
-    console.log('Quiz started.');
+    console.log('Quiz started');
+    render();
+  });
+}
+
+//Handles the submit button
+function handleSubmit() {
+  $('main').on('click', '#submit', (event) => {
+    event.preventDefault();
+    $('.buttons').prepend(generateFeedback());
+    generateNextandDisableButtons();
+  });
+}
+
+//Handles the next button
+function handleNext() {
+  $('main').on('click', '#next', (event) => {
+    store.questionNumber++;
+    render();
+  });
+}
+
+//Handles the restart button and resets the values
+function handleRestart() {
+  $('main').on('click', '#restart', (event) =>{
+    store.score = 0;
+    store.questionNumber = 0;
+    store.quizStarted = false;
     render();
   });
 }
@@ -149,6 +233,9 @@ function handleStartQuiz() {
 function handleQuiz(){
   render();
   handleStartQuiz();
+  handleSubmit();
+  handleNext();
+  handleRestart();
 }
 
 $(handleQuiz);
