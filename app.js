@@ -206,14 +206,13 @@ function handleStartQuiz() {
 
 //Handles the submit button
 function handleSubmit() {
-  $('main').on('click', '#submit', (event) => {
+  $('main').on('submit', (event) => {
     event.preventDefault();
-    if($('input[name=answer]:checked').val() > 0){
     $('.buttons').prepend(generateFeedback());
-    generateNextandDisableButtons();}
-    else{
-      alert('Please select an option!');
-    }
+    generateNextandDisableButtons();
+    //else{
+      //alert('Please select an option!');
+    //}
   });
 }
 
